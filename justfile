@@ -111,17 +111,17 @@ check-links:
         echo "❌ linkchecker not installed. Install with: pip install linkchecker"
         exit 1
     fi
-    
+
     echo "Starting MkDocs server..."
     mkdocs serve --dev-addr=127.0.0.1:8000 &
     SERVER_PID=$!
-    
+
     # Wait for server to start
     sleep 5
-    
+
     echo "Running linkchecker..."
     linkchecker http://127.0.0.1:8000 --check-extern || true
-    
+
     echo "Stopping server..."
     kill $SERVER_PID
 
@@ -144,12 +144,12 @@ new-post title:
     DATE=$(date +%Y-%m-%d)
     SLUG=$(echo "{{title}}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
     FILENAME="docs/blog/posts/${SLUG}.md"
-    
+
     if [ -f "$FILENAME" ]; then
         echo "❌ File $FILENAME already exists"
         exit 1
     fi
-    
+
     cat > "$FILENAME" << EOF
     ---
     date: $DATE
@@ -159,18 +159,18 @@ new-post title:
       - new
     comments: true
     ---
-    
+
     # {{title}}
-    
+
     Brief description of the post.
-    
+
     <!-- more -->
-    
+
     ## Content
-    
+
     Your content here...
     EOF
-    
+
     echo "✅ Created $FILENAME"
 
 # Validate specific blog post
@@ -181,18 +181,18 @@ validate-post file:
         echo "❌ File {{file}} not found"
         exit 1
     fi
-    
+
     # Check frontmatter
     if ! head -1 "{{file}}" | grep -q "^---$"; then
         echo "❌ Missing frontmatter"
         exit 1
     fi
-    
+
     # Check for excerpt separator
     if ! grep -q "<!-- more -->" "{{file}}"; then
         echo "⚠️  Missing excerpt separator '<!-- more -->'"
     fi
-    
+
     echo "✅ Blog post validation passed"
 
 # Generate requirements.txt from current environment
